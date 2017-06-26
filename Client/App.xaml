@@ -2,8 +2,36 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Client"
-             StartupUri="MainWindow.xaml">
+             xmlns:vm="clr-namespace:Client.ViewModels"
+             xmlns:content="clr-namespace:Client.Views.Content"
+             xmlns:converters="clr-namespace:Client.Converters"
+             StartupUri="Views/Windows/MainWindow.xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:InverseBooleanToVisibiltyConverter x:Key="InverseBooleanToVisibilityConverter"/>
+
+            <!--
+            We define the data templates here so we can apply them across the
+            entire application.
+            
+            The data template just says that if our data type is of a particular
+            view-model type, then render the appropriate view.  The framework
+            takes care of this dynamically.  Note that the DataContext for
+            the underlying view is already set at this point, so the
+            view (UserControl), doesn't need to have it's DataContext set
+            directly.
+            -->
+            <DataTemplate DataType="{x:Type vm:CharacterSelectViewModel}">
+                <content:CharacterSelect />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:NewCharacterViewModel}">
+                <content:NewCharacterSheet />
+            </DataTemplate>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
