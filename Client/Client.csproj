@@ -86,9 +86,14 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Classes.cs" />
+    <Compile Include="Converters\RadioButtonCheckedConverter.cs" />
+    <Compile Include="Converters\EnumDescriptionTypeConverter.cs" />
     <Compile Include="Converters\InverseBooleanToVisibiltyConverter.cs" />
+    <Compile Include="Markup\EnumBindingSourceExtension.cs" />
     <Compile Include="MessageTokens.cs" />
     <Compile Include="Models\Character.cs" />
+    <Compile Include="Models\CharacterStats.cs" />
     <Compile Include="Races.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\CharacterSelectViewModel.cs" />

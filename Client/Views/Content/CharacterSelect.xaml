@@ -7,7 +7,6 @@
              d:DataContext="{Binding CharacterSelect, Source={StaticResource Locator}}"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid Margin="10">
-        <!-- The grid element MUST be last, DockPanel has a Property called "LastChildFill" which lets the last child take up the available space. (i.e. the center area)-->
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />

@@ -3,11 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Client.Views.Content"
+             xmlns:client="clr-namespace:Client"
+             xmlns:markup="clr-namespace:Client.Markup"
+             xmlns:converters="clr-namespace:Client.Converters"
              mc:Ignorable="d" 
-             d:DataContext="{Binding CharacterSelect, Source={StaticResource Locator}}"
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
+             d:DataContext="{Binding NewCharacterSheet, Source={StaticResource Locator}}"
+             d:DesignHeight="415" d:DesignWidth="300">
+    <UserControl.Resources>
+        <converters:RadioButtonCheckedConverter x:Key="checkedRadioButtonConverter" />
+    </UserControl.Resources>
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -18,10 +23,75 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
-            <Label Content="Name" />
-            <TextBox />
-            <Button Content="?" />
-        </StackPanel>
+        <DockPanel Grid.Row="0" Grid.Column="0">
+            <Label Content="Name:" />
+            <Button Content="?" DockPanel.Dock="Right" Width="25" ToolTip="Roll new name" Command="{Binding GetNewCharacterName, Mode=OneWay}" />
+            <TextBox Padding="0" Margin="0,0,5,0" Text="{Binding CharacterName}" VerticalContentAlignment="Center" />
+        </DockPanel>
+        <GroupBox Grid.Row="1" Grid.Column="0" Header="Race" Margin="0,0,0,10">
+            <ItemsControl ItemsSource="{Binding Source={markup:EnumBindingSource {x:Type client:Races}}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton GroupName="Races" Content="{Binding Mode=OneWay}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </GroupBox>
+        <GroupBox Grid.Row="1" Grid.Column="1" Header="Class" Margin="0,0,0,10">
+            <ItemsControl ItemsSource="{Binding Source={markup:EnumBindingSource {x:Type client:Classes}}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton GroupName="Classes" Content="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </GroupBox>
+        <GroupBox Grid.Row="1" Grid.Column="2" Header="Stats" Margin="0,0,0,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <DockPanel Grid.Row="0" LastChildFill="False">
+                    <Label Content="STR" FontWeight="Bold"></Label>
+                    <Label DockPanel.Dock="Right" HorizontalContentAlignment="Right" Content="{Binding CharacterStrength}"></Label>
+                </DockPanel>
+                <DockPanel Grid.Row="1" LastChildFill="False">
+                    <Label Content="CON" FontWeight="Bold"></Label>
+                    <Label DockPanel.Dock="Right" HorizontalContentAlignment="Right" Content="{Binding CharacterConstitution}"></Label>
+                </DockPanel>
+                <DockPanel Grid.Row="2" LastChildFill="False">
+                    <Label Content="DEX" FontWeight="Bold"></Label>
+                    <Label DockPanel.Dock="Right" HorizontalContentAlignment="Right" Content="{Binding CharacterDexterity}"></Label>
+                </DockPanel>
+                <DockPanel Grid.Row="3" LastChildFill="False">
+                    <Label Content="INT" FontWeight="Bold"></Label>
+                    <Label DockPanel.Dock="Right" HorizontalContentAlignment="Right" Content="{Binding CharacterIntelligence}"></Label>
+                </DockPanel>
+                <DockPanel Grid.Row="4" LastChildFill="False">
+                    <Label Content="WIS" FontWeight="Bold"></Label>
+                    <Label DockPanel.Dock="Right" HorizontalContentAlignment="Right" Content="{Binding CharacterWisdom}"></Label>
+                </DockPanel>
+                <DockPanel Grid.Row="5" LastChildFill="False" Margin="0,0,0,10">
+                    <Label Content="CHA" FontWeight="Bold"></Label>
+                    <Label DockPanel.Dock="Right" HorizontalContentAlignment="Right" Content="{Binding CharacterCharisma}"></Label>
+                </DockPanel>
+                <DockPanel Grid.Row="6" LastChildFill="False" Margin="0,0,0,10">
+                    <Label Content="Total" FontWeight="Bold"></Label>
+                    <TextBox DockPanel.Dock="Right" HorizontalContentAlignment="Right" Text="{Binding TotalStats, Mode=OneWay}" VerticalContentAlignment="Center" Width="44"/>
+                </DockPanel>
+                <DockPanel Grid.Row="7" LastChildFill="False">
+                    <Button Content="Roll" HorizontalAlignment="Center" Padding="5,0" Command="{Binding RollStats, Mode=OneWay}" ToolTip="Roll new character stats" />
+                    <Button Content="Unroll" DockPanel.Dock="Right" HorizontalAlignment="Center" Padding="5,0" Command="{Binding UnrollStats, Mode=OneWay}" IsEnabled="{Binding UnrollStats, Mode=OneWay}" ToolTip="Restore previously rolled stats" />
+                </DockPanel>
+            </Grid>
+        </GroupBox>
+        <Button Content="Begin Quest" Grid.Row="2" Grid.ColumnSpan="3" HorizontalAlignment="Center" Padding="5,0" Command="{Binding BeginQuest, Mode=OneWay}" />
     </Grid>
 </UserControl>
