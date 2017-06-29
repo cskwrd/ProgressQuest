@@ -2,6 +2,8 @@
 {
     public enum MessageTokens
     {
-        WindowContentChange
+        WindowContentChange,
+        CharacterRaceChange,
+        CharacterClassChange
     }
 }

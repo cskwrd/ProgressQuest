@@ -4,6 +4,7 @@
     {
         MainWindow,
         CharacterSelect,
-        NewCharacter
+        NewCharacter,
+        Game
     }
 }

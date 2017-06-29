@@ -3,11 +3,11 @@
 namespace Client.Views.Content
 {
     /// <summary>
-    /// Interaction logic for NewCharacterSheet.xaml
+    /// Interaction logic for Game.xaml
     /// </summary>
-    public partial class NewCharacterSheet : UserControl
+    public partial class Game : UserControl
     {
-        public NewCharacterSheet()
+        public Game()
         {
             InitializeComponent();
         }

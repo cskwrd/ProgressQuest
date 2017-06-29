@@ -1,0 +1,5 @@
+﻿CREATE TABLE Characters(Name VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL
+, Race INT NOT NULL
+, Class INT NOT NULL
+, Level INT NOT NULL default '1'
+, CharacterStatsId INTEGER NOT NULL)

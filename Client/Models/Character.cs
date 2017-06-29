@@ -2,16 +2,67 @@
 {
     public class Character
     {
-        public string Name { get; set; }
+        private CharacterSummary _summary = new CharacterSummary();
+        private ICharacterAccessor _characterAccessor;
+
+        public Character(ICharacterAccessor characterAccessor)
+        {
+            _characterAccessor = characterAccessor;
+        }
+
+        public string Name
+        {
+            get => _summary.Name;
+            set
+            {
+                _summary.Name = value;
+            }
+        }
+
+        public Races Race
+        {
+            get => _summary.Race;
+            set
+            {
+                _summary.Race = value;
+            }
+        }
+
+        public Classes Class
+        {
+            get => _summary.Class;
+            set
+            {
+                _summary.Class = value;
+            }
+        }
+
+        public int Level
+        {
+            get => _summary.Level;
+            set
+            {
+                _summary.Level = value;
+            }
+        }
+
         public CharacterStats Stats { get; set; }
 
-        public Races Race { get; set; }
-
-        public Classes Class { get; set; }
+        public bool IsValid => Validate();
 
         public Character()
         {
             Stats = new CharacterStats();
+        }
+
+        private bool Validate()
+        {
+            return _summary.IsValid && Stats.IsValid;
+        }
+
+        internal void Save()
+        {
+            _characterAccessor.Save(this);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Client
         HalfMan = 2,
         [Description("Half Halfing")]
         HalfHalfing = 3,
-        [Description("DoubleHobbit")]
+        [Description("Double Hobbit")]
         DoubleHobbit = 4,
         [Description("Hob-Hobbit")]
         HobHobbit = 5,

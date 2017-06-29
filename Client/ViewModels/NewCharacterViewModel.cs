@@ -1,16 +1,19 @@
-﻿using Client.Models;
+﻿using Client.DataAccess.Sqlite;
+using Client.Messages;
+using Client.Models;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Client.ViewModels
 {
     public class NewCharacterViewModel : ViewModelBase
     {
         #region Fields
-        private Character _newCharacter = new Character();
+        private Character _newCharacter = new Character(new CharacterAccessor());
         private Stack<CharacterStats> _previousCharacterStats = new Stack<CharacterStats>();
         #endregion
 
@@ -66,6 +69,7 @@ namespace Client.ViewModels
                     _newCharacter.Stats.Dexterity = value;
                     RaisePropertyChanged(nameof(CharacterDexterity));
                     RaisePropertyChanged(nameof(TotalStats));
+                    BeginQuestCmd.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -80,6 +84,7 @@ namespace Client.ViewModels
                     _newCharacter.Stats.Intelligence = value;
                     RaisePropertyChanged(nameof(CharacterIntelligence));
                     RaisePropertyChanged(nameof(TotalStats));
+                    BeginQuestCmd.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -94,6 +99,7 @@ namespace Client.ViewModels
                     _newCharacter.Stats.Wisdom = value;
                     RaisePropertyChanged(nameof(CharacterWisdom));
                     RaisePropertyChanged(nameof(TotalStats));
+                    BeginQuestCmd.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -108,6 +114,7 @@ namespace Client.ViewModels
                     _newCharacter.Stats.Charisma = value;
                     RaisePropertyChanged(nameof(CharacterCharisma));
                     RaisePropertyChanged(nameof(TotalStats));
+                    BeginQuestCmd.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -121,6 +128,7 @@ namespace Client.ViewModels
                 {
                     _newCharacter.Race = value;
                     RaisePropertyChanged(nameof(CharacterRace));
+                    BeginQuestCmd.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -134,6 +142,7 @@ namespace Client.ViewModels
                 {
                     _newCharacter.Class = value;
                     RaisePropertyChanged(nameof(CharacterClass));
+                    BeginQuestCmd.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -151,6 +160,8 @@ namespace Client.ViewModels
         {
             RandomlySetCharacterName();
             SetCharacterStats(GenerateRandomCharacterStatSet());
+            RandomlySetCharacterRace();
+            RandomlySetCharacterClass();
             if (IsInDesignMode)
             {
                 // Code runs in Blend --> create design time data.
@@ -162,21 +173,50 @@ namespace Client.ViewModels
         }
 
         #region Commands
-        public RelayCommand BeginQuest => new RelayCommand(() => Messenger.Default.Send(ViewModelTypes.NewCharacter, MessageTokens.WindowContentChange));
+        public RelayCommand BeginQuestCmd => new RelayCommand(BeginQuest, CanBeginQuest);
         public RelayCommand RollStats => new RelayCommand(RollNewStatsForCharacter);
         public RelayCommand UnrollStats => new RelayCommand(UnrollPreviousStatsForCharacter, CanUnrollStats);
         public RelayCommand GetNewCharacterName => new RelayCommand(RandomlySetCharacterName);
+        public RelayCommand<Races> SetCharacterRaceCmd => new RelayCommand<Races>(SetCharacterRace);
+        public RelayCommand<Classes> SetCharacterClassCmd => new RelayCommand<Classes>(SetCharacterClass);
         #endregion
 
         #region Methods
+        private void SetCharacterClass(Classes obj)
+        {
+            CharacterClass = obj;
+        }
+
+        private void SetCharacterRace(Races obj)
+        {
+            CharacterRace = obj;
+        }
+
         private bool CanUnrollStats()
         {
             return _previousCharacterStats.Count > 0;
         }
 
+        private bool CanBeginQuest()
+        {
+            return _newCharacter?.IsValid ?? false;
+        }
+
         private void RandomlySetCharacterName()
         {
             CharacterName = RandomlyGenerateName();
+        }
+
+        private void RandomlySetCharacterRace()
+        {
+            var lastRace = (int)Enum.GetValues(typeof(Races)).Cast<Races>().Max();
+            CharacterRace = (Races)Enum.Parse(typeof(Races), (new Random()).Next(1, lastRace).ToString());
+        }
+
+        private void RandomlySetCharacterClass()
+        {
+            var lastClass = (int)Enum.GetValues(typeof(Classes)).Cast<Classes>().Max();
+            CharacterClass = (Classes)Enum.Parse(typeof(Classes), (new Random()).Next(1, lastClass).ToString());
         }
 
         private string RandomlyGenerateName()
@@ -220,7 +260,7 @@ namespace Client.ViewModels
         private CharacterStats GenerateRandomCharacterStatSet()
         {
             Random statGenerator = new Random();
-            var stats = new CharacterStats { Strength = statGenerator.Next(1, 16), Constitution = statGenerator.Next(1, 16), Dexterity = statGenerator.Next(1, 16), Intelligence = statGenerator.Next(1, 16), Wisdom = statGenerator.Next(1, 16), Charisma = statGenerator.Next(1, 16) };
+            var stats = new CharacterStats { Strength = statGenerator.Next(1, 16), Constitution = statGenerator.Next(1, 16), Dexterity = statGenerator.Next(1, 16), Intelligence = statGenerator.Next(1, 16), Wisdom = statGenerator.Next(1, 16), Charisma = statGenerator.Next(1, 16), HpMax = statGenerator.Next(1, 16), MpMax = statGenerator.Next(1, 16) };
             return stats;
         }
 
@@ -235,6 +275,13 @@ namespace Client.ViewModels
             RaisePropertyChanged(nameof(CharacterWisdom));
             RaisePropertyChanged(nameof(CharacterCharisma));
             RaisePropertyChanged(nameof(TotalStats));
+            BeginQuestCmd.RaiseCanExecuteChanged();
+        }
+
+        private void BeginQuest()
+        {
+            _newCharacter.Save();
+            Messenger.Default.Send(new WindowContentChangeMessage(ViewModelTypes.Game) { Character = _newCharacter }, MessageTokens.WindowContentChange);
         }
         #endregion
     }

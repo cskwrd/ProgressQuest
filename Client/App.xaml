@@ -1,14 +1,13 @@
 ﻿<Application x:Class="Client.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Client"
              xmlns:vm="clr-namespace:Client.ViewModels"
              xmlns:content="clr-namespace:Client.Views.Content"
              xmlns:converters="clr-namespace:Client.Converters"
              StartupUri="Views/Windows/MainWindow.xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Startup="Application_Startup">
     <Application.Resources>
         <ResourceDictionary>
             <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
@@ -31,6 +30,9 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:NewCharacterViewModel}">
                 <content:NewCharacterSheet />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:GameViewModel}">
+                <content:Game />
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>

@@ -1,10 +1,13 @@
+using Client.Messages;
 using Client.Models;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace Client.ViewModels
 {
@@ -22,12 +25,18 @@ namespace Client.ViewModels
     /// </summary>
     public class CharacterSelectViewModel : ViewModelBase
     {
+        [PreferredConstructor]
+        public CharacterSelectViewModel()
+        {
+
+        }
+
         /// <summary>
         /// Initializes a new instance of the CharacterSelectViewModel class.
         /// </summary>
-        public CharacterSelectViewModel()
+        public CharacterSelectViewModel(ICharacterAccessor characterAccessor)
         {
-            Characters = new List<Character>();
+            CharacterSummaries = new List<CharacterSummary>();
 
             if (IsInDesignMode)
             {
@@ -36,25 +45,38 @@ namespace Client.ViewModels
             else
             {
                 // Code runs "for real"
+                CharacterSummaries = characterAccessor.GetSavedCharacterSummaries();
             }
         }
 
         private Action<ViewModelBase> _setNewScreen = new Action<ViewModelBase>(vm => { });
 
-        public bool CharactersExist => Characters.Any();
+        public bool CharactersExist => CharacterSummaries.Any();
 
-        private List<Character> _characters;
-        public List<Character> Characters
+        private List<CharacterSummary> _characterSummaries;
+        public List<CharacterSummary> CharacterSummaries
         {
-            get => _characters;
+            get => _characterSummaries;
             set
             {
-                _characters = value;
-                RaisePropertyChanged(nameof(Characters));
+                _characterSummaries = value;
+                RaisePropertyChanged(nameof(CharacterSummaries));
             }
         }
 
-        public RelayCommand OpenNewCharacterSheet => new RelayCommand(() => Messenger.Default.Send(ViewModelTypes.NewCharacter, MessageTokens.WindowContentChange));
+        public RelayCommand OpenNewCharacterSheet => new RelayCommand(() => Messenger.Default.Send(new WindowContentChangeMessage(ViewModelTypes.NewCharacter), MessageTokens.WindowContentChange));
+        public RelayCommand<string> ContinueQuestingCmd => new RelayCommand<string>(ContinueQuesting);
 
+        private void ContinueQuesting(string obj)
+        {
+            MessageBox.Show("Would load character here");
+        }
+
+        public RelayCommand<string> DeleteCharacterCmd => new RelayCommand<string>(DeleteCharacter);
+
+        private void DeleteCharacter(string obj)
+        {
+            MessageBox.Show("Would load character here");
+        }
     }
 }

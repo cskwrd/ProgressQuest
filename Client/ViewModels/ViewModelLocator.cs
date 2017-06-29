@@ -44,6 +44,7 @@ namespace Client.ViewModels
             SimpleIoc.Default.Register<MainWindowViewModel>();
             SimpleIoc.Default.Register<CharacterSelectViewModel>();
             SimpleIoc.Default.Register<NewCharacterViewModel>();
+            SimpleIoc.Default.Register<GameViewModel>();
         }
 
         public MainWindowViewModel Main
@@ -67,6 +68,14 @@ namespace Client.ViewModels
             get
             {
                 return ServiceLocator.Current.GetInstance<NewCharacterViewModel>();
+            }
+        }
+
+        public GameViewModel Game
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<GameViewModel>();
             }
         }
 

@@ -1,3 +1,5 @@
+using Client.DataAccess.Sqlite;
+using Client.Messages;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
@@ -20,16 +22,20 @@ namespace Client.ViewModels
     /// </summary>
     public class MainWindowViewModel : ViewModelBase
     {
-        private void SetCurrentViewModel(ViewModelTypes viewModelType)
+        private void SetCurrentViewModel(WindowContentChangeMessage msg)
         {
             ViewModelBase vm = null;
+            ViewModelTypes viewModelType = msg.ViewModelType;
             switch (viewModelType)
             {
                 case ViewModelTypes.CharacterSelect:
-                    vm = new CharacterSelectViewModel();
+                    vm = new CharacterSelectViewModel(new CharacterAccessor());
                     break;
                 case ViewModelTypes.NewCharacter:
                     vm = new NewCharacterViewModel();
+                    break;
+                case ViewModelTypes.Game:
+                    vm = new GameViewModel(msg.Character);
                     break;
                 default:
                     throw new ArgumentException($"Cannot change to type: {viewModelType.ToString()}");
@@ -42,13 +48,13 @@ namespace Client.ViewModels
         /// </summary>
         public MainWindowViewModel()
         {
-            Messenger.Default.Register<ViewModelTypes>(this, MessageTokens.WindowContentChange, SetCurrentViewModel);
-            SetCurrentViewModel(ViewModelTypes.CharacterSelect);
+            Messenger.Default.Register<WindowContentChangeMessage>(this, MessageTokens.WindowContentChange, SetCurrentViewModel);
+            CurrentViewModel = new CharacterSelectViewModel(new CharacterAccessor());
             if (IsInDesignMode)
             {
                 // Code runs in Blend --> create design time data.
 
-                ((CharacterSelectViewModel)CurrentViewModel).Characters.Add(new Models.Character { Name = "Chuck" });
+                ((CharacterSelectViewModel)CurrentViewModel).CharacterSummaries.Add(new Models.CharacterSummary { Name = "Chuck" });
             }
             else
             {
@@ -62,8 +68,8 @@ namespace Client.ViewModels
             view.Close();
         }
 
-        public RelayCommand OpenNewCharacterSheet => new RelayCommand(() => SetCurrentViewModel(ViewModelTypes.NewCharacter));
-        public RelayCommand OpenCharacterRoster => new RelayCommand(() => SetCurrentViewModel(ViewModelTypes.CharacterSelect));
+        public RelayCommand OpenNewCharacterSheet => new RelayCommand(() => SetCurrentViewModel(new WindowContentChangeMessage(ViewModelTypes.NewCharacter)));
+        public RelayCommand OpenCharacterRoster => new RelayCommand(() => SetCurrentViewModel(new WindowContentChangeMessage(ViewModelTypes.CharacterSelect)));
 
         private ViewModelBase _currentViewModel;
         public ViewModelBase CurrentViewModel

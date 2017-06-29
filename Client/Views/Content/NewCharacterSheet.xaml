@@ -2,16 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:client="clr-namespace:Client"
              xmlns:markup="clr-namespace:Client.Markup"
              xmlns:converters="clr-namespace:Client.Converters"
              mc:Ignorable="d" 
              d:DataContext="{Binding NewCharacterSheet, Source={StaticResource Locator}}"
-             d:DesignHeight="415" d:DesignWidth="300">
-    <UserControl.Resources>
-        <converters:RadioButtonCheckedConverter x:Key="checkedRadioButtonConverter" />
-    </UserControl.Resources>
+             d:DesignHeight="415" d:DesignWidth="500">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -29,22 +26,54 @@
             <TextBox Padding="0" Margin="0,0,5,0" Text="{Binding CharacterName}" VerticalContentAlignment="Center" />
         </DockPanel>
         <GroupBox Grid.Row="1" Grid.Column="0" Header="Race" Margin="0,0,0,10">
-            <ItemsControl ItemsSource="{Binding Source={markup:EnumBindingSource {x:Type client:Races}}}">
-                <ItemsControl.ItemTemplate>
+            <ListBox ItemsSource="{Binding Source={markup:EnumBindingSource {x:Type client:Races}}}" SelectedItem="{Binding CharacterRace}" BorderBrush="Transparent" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                <ListBox.ItemContainerStyle>
+                    <!-- Style to get rid of the selection visual -->
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <RadioButton GroupName="Races" Content="{Binding Mode=OneWay}"/>
+                        <RadioButton GroupName="Races" Content="{Binding}">
+                            <RadioButton.IsChecked>
+                                <Binding Path="IsSelected" RelativeSource="{RelativeSource AncestorType=ListBoxItem}" Mode="TwoWay" />
+                            </RadioButton.IsChecked>
+                        </RadioButton>
                     </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </GroupBox>
         <GroupBox Grid.Row="1" Grid.Column="1" Header="Class" Margin="0,0,0,10">
-            <ItemsControl ItemsSource="{Binding Source={markup:EnumBindingSource {x:Type client:Classes}}}">
-                <ItemsControl.ItemTemplate>
+            <ListBox ItemsSource="{Binding Source={markup:EnumBindingSource {x:Type client:Classes}}}" SelectedItem="{Binding CharacterClass}" BorderBrush="Transparent" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                <ListBox.ItemContainerStyle>
+                    <!-- Style to get rid of the selection visual -->
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <RadioButton GroupName="Classes" Content="{Binding}" />
+                        <RadioButton GroupName="Classes" Content="{Binding}">
+                            <RadioButton.IsChecked>
+                                <Binding Path="IsSelected" RelativeSource="{RelativeSource AncestorType=ListBoxItem}" Mode="TwoWay" />
+                            </RadioButton.IsChecked>
+                        </RadioButton>
                     </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </GroupBox>
         <GroupBox Grid.Row="1" Grid.Column="2" Header="Stats" Margin="0,0,0,10">
             <Grid>
@@ -88,10 +117,10 @@
                 </DockPanel>
                 <DockPanel Grid.Row="7" LastChildFill="False">
                     <Button Content="Roll" HorizontalAlignment="Center" Padding="5,0" Command="{Binding RollStats, Mode=OneWay}" ToolTip="Roll new character stats" />
-                    <Button Content="Unroll" DockPanel.Dock="Right" HorizontalAlignment="Center" Padding="5,0" Command="{Binding UnrollStats, Mode=OneWay}" IsEnabled="{Binding UnrollStats, Mode=OneWay}" ToolTip="Restore previously rolled stats" />
+                    <Button Content="Unroll" DockPanel.Dock="Right" HorizontalAlignment="Center" Padding="5,0" Command="{Binding UnrollStats, Mode=OneWay}" ToolTip="Restore previously rolled stats" />
                 </DockPanel>
             </Grid>
         </GroupBox>
-        <Button Content="Begin Quest" Grid.Row="2" Grid.ColumnSpan="3" HorizontalAlignment="Center" Padding="5,0" Command="{Binding BeginQuest, Mode=OneWay}" />
+        <Button Content="Begin Quest" Grid.Row="2" Grid.ColumnSpan="3" HorizontalAlignment="Center" Padding="5,0" Command="{Binding BeginQuestCmd, Mode=OneWay}" />
     </Grid>
 </UserControl>
